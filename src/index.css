@@ -1,74 +1,39 @@
 @import "tailwindcss";
-.App {
-  font-family: Arial, Helvetica, sans-serif;
+html, body {
+    @apply h-full;
 }
 
-#newCategory,
-#newTask,
+.App {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.app-loading {
+    cursor: wait !important;
+}
+
+.app-loading * {
+    cursor: wait !important;
+}
+
+#newCategory, #newTask,
 .listCategorie {
-  padding: 7px;
-  border: 1px solid #bbb;
-  border-radius: 5px;
-  width: 100%;
+    @apply p-2 border border-gray-300 rounded w-full;
 }
 
 button {
-  background-color: #28a745;
-  color: white;
-  padding: 7px 5px;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  width: 180px;
-}
-
-button:hover {
-  background-color: #85b28f;
-}
-
-.toDo {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 15px;
-}
-
-#title {
-  text-align: center;
-}
-
-#errorCategory {
-  color: red;
-  font-size: 12px;
+    @apply bg-green-600 text-white px-4 py-2 rounded w-44
+    transition-colors hover:bg-green-800 disabled:bg-gray-300
+    disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-70;
 }
 
 .inline-input {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
-.task-card span {
-  width: 100%;
+    @apply flex gap-2 w-full;
 }
 
 .tasks ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.task-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0px;
+    @apply m-0 p-0 list-none;
 }
 
 .task-card.done span {
-  text-decoration: line-through;
-  color: #aaa;
+    @apply line-through text-gray-400;
 }

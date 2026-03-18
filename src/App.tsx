@@ -1,13 +1,13 @@
 import ToDo from './components/ToDo'
-import './App.css'
+import { Toaster } from 'react-hot-toast';
 
 function App() {
-
-  return (
-    <>
-      <ToDo />
-    </>
-  )
+    return (
+        <>
+        <Toaster position="top-center" reverseOrder={false} />
+        <ToDo />
+        </>
+    );
 }
 
 export default App

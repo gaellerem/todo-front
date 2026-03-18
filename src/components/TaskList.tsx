@@ -1,54 +1,38 @@
-import React from 'react';
+import type { Task } from "../models/tasks";
 
-export interface Task {
-  label: string;
-  category: string;
-  done: boolean;
+interface TasksListProps {
+    tasks: Task[];
+    onToggle: (id: number, current: boolean) => void;
+    onDelete: (id: number) => void;
 }
 
-interface Props {
-  tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-}
-
-function TaskList({ tasks, setTasks }: Props) {
-  if (!tasks || tasks.length === 0) {
-    return <p>Aucune tâche à afficher</p>;
-  }
-
-  const handleCheck = (index: number) => {
-    // modifie la tâche à l'index donné
-    setTasks(
-      tasks.map((task, i) =>
-        i === index ? { ...task, done: !task.done } : task
-      )
-    );
-  };
-
-  const handleDelete = (index: number) => {
-    // supprime la tâche à l'index donné
-    setTasks(tasks.filter((_, i) => i !== index));
-  };
+function TaskList({ tasks, onToggle, onDelete }: TasksListProps) {
+    if (!tasks || tasks.length === 0) {
+        return <p>Aucune tâche à afficher</p>;
+    }
 
   return (
     <div className="tasks">
-      <ul>
-        {tasks.map((task, index) => (
-          // nom de classe différente en fonction de l'état de la tâche
-          // pour gérer le style
-          <li className={`task-card${task.done ? " done" : ""}`} key={index}>
-            <input
-              type="checkbox"
-              checked={task.done}
-              onChange={() => handleCheck(index)}
-            />
-            <span>
-              {task.label} ({task.category})
-            </span>
-            <button onClick={() => handleDelete(index)}>Supprimer</button>
-          </li>
-        ))}
-      </ul>
+        <ul>
+            {tasks.map((task) => (
+                // nom de classe différente en fonction de l'état de la tâche
+                // pour gérer le style
+                <li className={`flex items-center gap-2 border border-gray-200 rounded p-2 my-2
+                        ${task.is_completed ? "line-through text-gray-400" : ""}`}
+                    key={task.id}
+                >
+                    <input
+                        type="checkbox"
+                        checked={task.is_completed}
+                        onChange={() => onToggle(task.id, task.is_completed)}
+                    />
+                    <span className="flex-1">
+                        {task.description} ({task.category.name})
+                    </span>
+                    <button onClick={() => onDelete(task.id)}>Supprimer</button>
+                </li>
+            ))}
+        </ul>
     </div>
   );
 }
