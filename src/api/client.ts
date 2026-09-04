@@ -10,7 +10,7 @@ interface CreateTaskPayload {
 }
 
 export const api = axios.create({
-    baseURL: "http://localhost:8000/api/",
+    baseURL: `${import.meta.env.VITE_API_URL}/api`,
     headers: {
         "Content-Type": "application/json",
     },
@@ -20,6 +20,7 @@ api.interceptors.response.use(
     response => response,
     error => {
         if (!error.response) {
+            toast.error("Impossible de joindre le serveur.");
             return Promise.reject({ type: "network", message: "Impossible de joindre le serveur." });
         }
 
@@ -54,7 +55,7 @@ export const getCategories = () => handleRequest<Category[]>(api.get("categories
 
 export const createCategory = (name: string) => handleRequest<Category>(api.post("categories/", { name }));
 
-export const getTasks = () => handleRequest<Task[]>(api.get("tasks/"));
+export const getTasks = (params?: { category_id?: number }) => handleRequest<Task[]>(api.get("tasks/", { params }));
 
 export const getTask = (id: number) => handleRequest<Task>(api.get(`tasks/${id}/`));
 
