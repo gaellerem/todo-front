@@ -27,27 +27,39 @@ function ToDo() {
         }
     };
 
-    const refetchAll = () => 
+    const refetchTasks = () =>
         withLoading(async () => {
             try {
-                const [fetchedCategories, fetchedTasks] = await Promise.all([
-                    getCategories(),
-                    getTasks()
-                ]);
+                const params: any = {};
 
-                setCategories(fetchedCategories);
+                if (filterCategory !== 0) {
+                    params.category = filterCategory;
+                }
+
+                const fetchedTasks = await getTasks(params);
                 setTasks(fetchedTasks);
             } catch (err: any) {
-                if (err.type === "network") {
-                    toast.error(err.message);
-                }
-                console.log(err.message || "Impossible de charger les données.");
+                console.log(err.message || "Impossible de charger les tâches.");
+            }
+        });
+
+    const refetchCategories = () => 
+        withLoading(async () => {
+            try {
+                const fetched = await getCategories();
+                setCategories(fetched);
+            } catch (err: any) {
+                console.log(err);
             }
         });
 
     useEffect(() => {
-        refetchAll();
+        refetchCategories();
     }, []);
+
+    useEffect(() => {
+        refetchTasks();
+    }, [filterCategory]);
 
     const handleAddCategory = (e: React.FormEvent<HTMLFormElement>) => 
         withLoading(async () => {
@@ -56,8 +68,8 @@ function ToDo() {
             if (!trimmed) return;
 
             try {
-                const created = await createCategory(trimmed);
-                setCategories([...categories, created]);
+                await createCategory(trimmed);
+                await refetchCategories();
                 setNewCategory("");
             } catch (err: any) {
                 if (err.type === "validation" && err.errors?.name) {
@@ -67,7 +79,7 @@ function ToDo() {
                     return;
                 }
                 if (err.type === "not_found") {
-                    await refetchAll();
+                    await refetchCategories();
                     console.log("Ressource non trouvée, données rafraîchies.");
                     return;
                 }
@@ -81,15 +93,14 @@ function ToDo() {
             if (!newTask.trim() || selected === 0) return;
 
             try {
-                const created = await createTask({
+                await createTask({
                     description: newTask.trim(),
                     category_id: selected,
                 });
-                setTasks(prev => [...prev, created]);
+                await refetchTasks();
                 setNewTask("");
             } catch (err: any) {
                 if (err.type === "validation" && err.errors?.category_id) {
-                    // Affiche le message spécifique de validation
                     toast.error(err.errors.category_id.join(", "));
                     console.log("Erreur de validation :", err.errors.category_id.join(", "));
                     return;
@@ -105,7 +116,8 @@ function ToDo() {
                 setTasks(prev => prev.map(t => (t.id === taskId ? updated : t)));
             } catch (err: any) {
                 if (err.type === "not_found") {
-                    await refetchAll();
+                    await refetchTasks();
+                    console.log("Ressource non trouvée, données rafraîchies.");
                     return;
                 }
                 console.log(err.message);
@@ -119,15 +131,13 @@ function ToDo() {
                 setTasks(prev => prev.filter(t => t.id !== taskId));
             } catch (err: any) {
                 if (err.type === "not_found") {
-                    await refetchAll();
+                    await refetchTasks();
+                    console.log("Ressource non trouvée, données rafraîchies.");
                     return;
                 }
                 console.log(err.message);
             }
         });
-
-	const filteredTasks =
-		filterCategory === 0 ? tasks : tasks.filter((t) => t.category.id === filterCategory);
 
 	return (
 		<section className={`flex flex-col p-5 gap-4 ${loading ? "app-loading" : ""}`}>
@@ -189,7 +199,7 @@ function ToDo() {
                 <button type="submit" disabled={!newTask.trim() || selected === 0 || loading}>Ajouter</button>
             </form>
             <TaskList 
-                tasks={filteredTasks}
+                tasks={tasks}
                 onToggle={handleToggleTask}
                 onDelete={handleDeleteTask}
             />
