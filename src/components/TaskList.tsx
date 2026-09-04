@@ -17,8 +17,7 @@ function TaskList({ tasks, onToggle, onDelete }: TasksListProps) {
             {tasks.map((task) => (
                 // nom de classe différente en fonction de l'état de la tâche
                 // pour gérer le style
-                <li className={`flex items-center gap-2 border border-gray-200 rounded p-2 my-2
-                        ${task.is_completed ? "line-through text-gray-400" : ""}`}
+                <li className="flex items-center gap-2 border border-gray-200 rounded p-2 my-2"
                     key={task.id}
                 >
                     <input
@@ -26,7 +25,7 @@ function TaskList({ tasks, onToggle, onDelete }: TasksListProps) {
                         checked={task.is_completed}
                         onChange={() => onToggle(task.id, task.is_completed)}
                     />
-                    <span className="flex-1">
+                    <span className={`flex-1 ${task.is_completed ? "line-through text-gray-400" : ""}`}>
                         {task.description} ({task.category.name})
                     </span>
                     <button onClick={() => onDelete(task.id)}>Supprimer</button>
