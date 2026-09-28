@@ -21,8 +21,8 @@ html, body {
 }
 
 button {
-    @apply bg-green-600 text-white px-4 py-2 rounded w-44
-    transition-colors hover:bg-green-800 disabled:bg-gray-300
+    @apply bg-purple-600 text-white px-4 py-2 rounded w-44
+    transition-colors hover:bg-purple-800 disabled:bg-gray-300
     disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-70;
 }
 
