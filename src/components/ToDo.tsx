@@ -139,6 +139,13 @@ function ToDo() {
             }
         });
 
+
+    const handleCrash = () => {
+            // Cette fonction va planter car 'undefined' n'a pas de propriété 'name'
+            const user = undefined;
+            console.log(user.name);
+        };
+
 	return (
 		<section className={`flex flex-col p-5 gap-4 ${loading ? "app-loading" : ""}`}>
 			<h1 id="title" className="text-center text-2xl font-bold"> Ma To-Do List par Catégories</h1>
@@ -198,6 +205,7 @@ function ToDo() {
                 </select>
                 <button type="submit" disabled={!newTask.trim() || selected === 0 || loading}>Ajouter</button>
             </form>
+            <button onClick={handleCrash}>Crash Test</button>
             <TaskList 
                 tasks={tasks}
                 onToggle={handleToggleTask}
