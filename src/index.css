@@ -1,6 +1,7 @@
 @import "tailwindcss";
+
 html, body {
-    @apply h-full;
+    height: 100%;
 }
 
 .App {
@@ -15,25 +16,48 @@ html, body {
     cursor: wait !important;
 }
 
-#newCategory, #newTask,
+#newCategory,
+#newTask,
 .listCategorie {
-    @apply p-2 border border-gray-300 rounded w-full;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    width: 100%;
 }
 
 button {
-    @apply bg-purple-600 text-white px-4 py-2 rounded w-44
-    transition-colors hover:bg-purple-800 disabled:bg-gray-300
-    disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-70;
+    background-color: #7c3aed;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    width: 11rem;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #6d28d9;
+}
+
+button:disabled {
+    background-color: #d1d5db;
+    color: #4b5563;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .inline-input {
-    @apply flex gap-2 w-full;
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .tasks ul {
-    @apply m-0 p-0 list-none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .task-card.done span {
-    @apply line-through text-gray-400;
+    text-decoration: line-through;
+    color: #9ca3af;
 }
