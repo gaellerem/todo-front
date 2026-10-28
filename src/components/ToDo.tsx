@@ -4,17 +4,18 @@ import { getCategories, createCategory, getTasks, createTask, deleteTask, update
 import type { Category } from "../models/categories";
 import type { Task } from "../models/tasks";
 import TaskList from "./TaskList";
+import AddTaskForm from "./AddTaskForm";
 
 function ToDo() {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [tasksLoading, setTasksLoading] = useState<boolean>(true);
+    const [tasksError, setTasksError] = useState<string>("");
 
 	const [newCategory, setNewCategory] = useState<string>("");
-	const [newTask, setNewTask] = useState<string>("");
 
 	const [filterCategory, setFilterCategory] = useState<number>(0);
-	const [selected, setSelected] = useState<number>(0);
 
     const withLoading = async (fn: () => Promise<void>) => {
         document.body.style.cursor = "wait";
@@ -29,6 +30,8 @@ function ToDo() {
 
     const refetchTasks = () =>
         withLoading(async () => {
+            setTasksLoading(true);
+            setTasksError("");
             try {
                 const params: any = {};
 
@@ -39,7 +42,10 @@ function ToDo() {
                 const fetchedTasks = await getTasks(params);
                 setTasks(fetchedTasks);
             } catch (err: any) {
+                setTasksError("Impossible de charger les tâches.");
                 console.log(err.message || "Impossible de charger les tâches.");
+            } finally {
+                setTasksLoading(false);
             }
         });
 
@@ -87,18 +93,16 @@ function ToDo() {
             }
 	    });
 
-	const handleAddTask = (e: React.FormEvent<HTMLFormElement>) => 
+    const handleAddTask = (description: string, categoryId: number) =>
         withLoading(async () => {
-            e.preventDefault();
-            if (!newTask.trim() || selected === 0) return;
+            if (!description.trim() || categoryId === 0) return;
 
             try {
                 await createTask({
-                    description: newTask.trim(),
-                    category_id: selected,
+                    description: description.trim(),
+                    category_id: categoryId,
                 });
                 await refetchTasks();
-                setNewTask("");
             } catch (err: any) {
                 if (err.type === "validation" && err.errors?.category_id) {
                     toast.error(err.errors.category_id.join(", "));
@@ -139,13 +143,6 @@ function ToDo() {
             }
         });
 
-
-    const handleCrash = () => {
-            // Cette fonction va planter car 'undefined' n'a pas de propriété 'name'
-            const user = undefined;
-            console.log(user.name);
-        };
-
 	return (
 		<section className={`flex flex-col p-5 gap-4 ${loading ? "app-loading" : ""}`}>
 			<h1 id="title" className="text-center text-2xl font-bold"> Ma To-Do List par Catégories</h1>
@@ -178,34 +175,13 @@ function ToDo() {
                 </select>
             </div>
 
-            <form className="inline-input" onSubmit={handleAddTask}>
-                <input
-                    type="text"
-                    name="newTask"
-                    id="newTask"
-                    placeholder="Nouvelle tâche"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    required
-                />
-                <select
-                    className="listCategorie"
-                    value={selected}
-                    onChange={(e) => setSelected(Number(e.target.value))}
-                    required
-                >
-                    <option value={0} disabled>
-                        -- Choisissez une catégorie --
-                    </option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
-                <button type="submit" disabled={!newTask.trim() || selected === 0 || loading}>Ajouter</button>
-            </form>
-            <button onClick={handleCrash}>Crash Test</button>
+            <AddTaskForm
+                categories={categories}
+                loading={loading}
+                onSubmit={handleAddTask}
+            />
+            {tasksLoading && <p role="status">Chargement...</p>}
+            {tasksError && <p role="alert" className="text-red-600">{tasksError}</p>}
             <TaskList 
                 tasks={tasks}
                 onToggle={handleToggleTask}

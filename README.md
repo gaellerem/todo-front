@@ -4,6 +4,8 @@ Application front-end de gestion de tâches en React + TypeScript pour une ToDo 
 
 Elle permet de :
 
+- créer un compte et se connecter,
+- gérer une session avec token Bearer et se déconnecter,
 - créer des catégories,
 - filtrer les tâches par catégorie,
 - ajouter de nouvelles tâches,
@@ -35,7 +37,7 @@ Elle permet de :
 
 - Node.js 18+
 - npm
-- Un backend API exposant les routes `/api/categories` et `/api/tasks`
+- Un backend API exposant les routes `/api/auth`, `/api/categories` et `/api/tasks`
 
 ## Installation
 
@@ -103,12 +105,20 @@ baseURL: `${import.meta.env.VITE_API_URL}/api`
 
 Les appels principaux sont :
 
+- `POST /auth/register/` avec `{ username, password }`
+- `POST /auth/login/` avec `{ username, password }`
+- `POST /auth/logout/`
 - `GET /categories/`
 - `POST /categories/`
 - `GET /tasks/`
 - `POST /tasks/`
 - `PATCH /tasks/:id/`
 - `DELETE /tasks/:id/`
+
+La connexion et l'inscription retournent un objet contenant `token`. Le front le
+conserve dans le stockage local du navigateur et l'envoie dans l'en-tête
+`Authorization: Bearer <token>`. Le backend associe les catégories et tâches au
+compte courant ; aucun `user_id` n'est envoyé dans les payloads de tâches.
 
 ## Remarques
 
